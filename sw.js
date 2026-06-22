@@ -1,4 +1,4 @@
-const CACHE = 'todo-v1';
+const CACHE = 'todo-v2';
 const ASSETS = ['/Todo/', '/Todo/index.html'];
 
 self.addEventListener('install', e => {

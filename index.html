@@ -11,12 +11,7 @@
   <link rel="apple-touch-icon" href="icon-192.svg" />
   <title>할 일</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     :root {
       --bg: #F8F7F4;
@@ -46,7 +41,6 @@
       min-height: 100dvh;
     }
 
-    /* Header */
     header {
       padding: 56px 24px 8px;
       background: var(--bg);
@@ -55,29 +49,15 @@
       z-index: 10;
     }
 
-    header h1 {
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text);
-    }
+    header h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.5px; }
 
-    .count {
-      font-size: 14px;
-      color: var(--sub);
-      margin-top: 4px;
-      font-weight: 400;
-    }
+    .count { font-size: 14px; color: var(--sub); margin-top: 4px; }
 
-    /* Filter tabs */
     .tabs {
       display: flex;
       gap: 8px;
       padding: 16px 24px 12px;
-      overflow-x: auto;
-      scrollbar-width: none;
     }
-    .tabs::-webkit-scrollbar { display: none; }
 
     .tab {
       flex-shrink: 0;
@@ -87,16 +67,32 @@
       font-weight: 500;
       border: none;
       cursor: pointer;
-      transition: all 0.15s ease;
       background: var(--surface);
       color: var(--sub);
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-    .tab.active {
-      background: var(--accent);
+    .tab.active { background: var(--accent); color: white; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.3);
       color: white;
     }
+    .tab:not(.active) .badge {
+      background: var(--border);
+      color: var(--sub);
+    }
 
-    /* List */
     main {
       flex: 1;
       overflow-y: auto;
@@ -104,12 +100,7 @@
       padding-bottom: 100px;
     }
 
-    .todo-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .todo-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 
     .todo-item {
       display: flex;
@@ -119,8 +110,9 @@
       border-radius: 14px;
       padding: 14px 16px;
       box-shadow: var(--shadow);
-      transition: opacity 0.2s;
       animation: slideIn 0.2s ease;
+      transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+      overflow: hidden;
     }
 
     @keyframes slideIn {
@@ -128,39 +120,38 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .todo-item.done {
-      opacity: 0.5;
+    .todo-item.vanish {
+      opacity: 0;
+      transform: translateX(40px);
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
 
-    /* Checkbox */
+    .todo-item.done-style {
+      opacity: 0.55;
+    }
+
     .check-btn {
-      width: 24px;
-      height: 24px;
+      width: 24px; height: 24px;
       border-radius: 50%;
       border: 2px solid var(--border);
       flex-shrink: 0;
       cursor: pointer;
       background: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s ease;
     }
-    .check-btn.checked {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
+    .check-btn.checked { background: var(--accent); border-color: var(--accent); }
     .check-btn.checked::after {
       content: '';
-      width: 6px;
-      height: 10px;
+      width: 6px; height: 10px;
       border: 2px solid white;
-      border-top: none;
-      border-left: none;
+      border-top: none; border-left: none;
       transform: rotate(42deg) translateY(-1px);
     }
 
-    /* Text */
     .todo-text {
       flex: 1;
       font-size: 16px;
@@ -168,12 +159,8 @@
       word-break: break-word;
       cursor: pointer;
     }
-    .done .todo-text {
-      text-decoration: line-through;
-      color: var(--done);
-    }
+    .done-style .todo-text { text-decoration: line-through; color: var(--done); }
 
-    /* Edit mode */
     .todo-edit-input {
       flex: 1;
       font-size: 16px;
@@ -185,50 +172,47 @@
       padding: 0;
     }
 
-    /* Delete */
     .delete-btn {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       border: none;
       background: #FF3B3015;
       color: var(--danger);
       font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       opacity: 0;
       transition: opacity 0.15s;
     }
     .todo-item:hover .delete-btn,
-    .todo-item:focus-within .delete-btn {
-      opacity: 1;
+    .todo-item:focus-within .delete-btn { opacity: 1; }
+
+    .restore-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
 
-    /* Empty state */
     .empty {
       text-align: center;
       padding: 80px 24px;
       color: var(--sub);
     }
-    .empty .icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    .empty p {
-      font-size: 16px;
-    }
+    .empty .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty p { font-size: 16px; }
 
-    /* Input area */
     .input-area {
       position: fixed;
-      bottom: 0;
-      left: 50%;
+      bottom: 0; left: 50%;
       transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
+      width: 100%; max-width: 480px;
       padding: 12px 16px;
       padding-bottom: max(12px, env(safe-area-inset-bottom));
       background: rgba(248, 247, 244, 0.92);
@@ -237,11 +221,7 @@
       border-top: 1px solid var(--border);
     }
 
-    .input-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .input-row { display: flex; gap: 10px; align-items: center; }
 
     .input-row input {
       flex: 1;
@@ -256,16 +236,11 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    .input-row input:focus {
-      border-color: var(--accent);
-    }
-    .input-row input::placeholder {
-      color: var(--sub);
-    }
+    .input-row input:focus { border-color: var(--accent); }
+    .input-row input::placeholder { color: var(--sub); }
 
     .add-btn {
-      width: 46px;
-      height: 46px;
+      width: 46px; height: 46px;
       border-radius: 50%;
       background: var(--accent);
       border: none;
@@ -273,27 +248,11 @@
       font-size: 22px;
       cursor: pointer;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.1s, background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.1s;
     }
-    .add-btn:active {
-      transform: scale(0.93);
-    }
-    .add-btn:disabled {
-      background: var(--border);
-    }
-
-    /* Section label */
-    .section-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--sub);
-      padding: 16px 8px 8px;
-    }
+    .add-btn:active { transform: scale(0.93); }
+    .add-btn:disabled { background: var(--border); }
   </style>
 </head>
 <body>
@@ -304,9 +263,8 @@
 </header>
 
 <div class="tabs">
-  <button class="tab active" data-filter="all">전체</button>
-  <button class="tab" data-filter="active">남은 것</button>
-  <button class="tab" data-filter="done">완료</button>
+  <button class="tab active" data-filter="active">할 일</button>
+  <button class="tab" data-filter="done">완료 <span class="badge" id="done-badge">0</span></button>
 </div>
 
 <main>
@@ -322,28 +280,34 @@
 
 <script>
   let todos = JSON.parse(localStorage.getItem('todos') || '[]');
-  let filter = 'all';
+  let filter = 'active';
   let editingId = null;
 
   const listEl = document.getElementById('todo-list');
   const countEl = document.getElementById('count');
   const input = document.getElementById('new-todo');
   const addBtn = document.getElementById('add-btn');
+  const doneBadge = document.getElementById('done-badge');
 
-  function save() {
-    localStorage.setItem('todos', JSON.stringify(todos));
+  function save() { localStorage.setItem('todos', JSON.stringify(todos)); }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function getFiltered() {
-    if (filter === 'active') return todos.filter(t => !t.done);
-    if (filter === 'done')   return todos.filter(t => t.done);
-    return todos;
+  function updateMeta() {
+    const active = todos.filter(t => !t.done).length;
+    const done = todos.filter(t => t.done).length;
+    countEl.textContent = active > 0 ? `${active}개 남음` : todos.length > 0 ? '모두 완료 🎉' : '';
+    doneBadge.textContent = done;
+    doneBadge.style.display = done > 0 ? '' : 'none';
   }
 
   function render() {
-    const filtered = getFiltered();
-    const remaining = todos.filter(t => !t.done).length;
-    countEl.textContent = remaining > 0 ? `${remaining}개 남음` : todos.length > 0 ? '모두 완료 🎉' : '';
+    updateMeta();
+    const filtered = filter === 'active'
+      ? todos.filter(t => !t.done)
+      : todos.filter(t => t.done);
 
     if (filtered.length === 0) {
       listEl.innerHTML = `
@@ -355,40 +319,43 @@
     }
 
     listEl.innerHTML = filtered.map(todo => `
-      <li class="todo-item ${todo.done ? 'done' : ''}" data-id="${todo.id}">
+      <li class="todo-item ${todo.done ? 'done-style' : ''}" data-id="${todo.id}">
         <button class="check-btn ${todo.done ? 'checked' : ''}" data-action="toggle" aria-label="완료 토글"></button>
         ${editingId === todo.id
           ? `<input class="todo-edit-input" value="${escHtml(todo.text)}" data-action="editinput" autofocus />`
           : `<span class="todo-text" data-action="edit">${escHtml(todo.text)}</span>`
         }
+        ${todo.done
+          ? `<button class="restore-btn" data-action="restore" title="되돌리기" aria-label="되돌리기">↩</button>`
+          : ''
+        }
         <button class="delete-btn" data-action="delete" aria-label="삭제">✕</button>
       </li>
     `).join('');
 
-    // Focus edit input if needed
     if (editingId) {
       const ei = listEl.querySelector('.todo-edit-input');
       if (ei) { ei.focus(); ei.setSelectionRange(ei.value.length, ei.value.length); }
     }
   }
 
-  function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // 체크 시 애니메이션 후 이동
+  function toggleWithAnimation(id) {
+    const li = listEl.querySelector(`[data-id="${id}"]`);
+    if (li) {
+      li.classList.add('vanish');
+      setTimeout(() => {
+        todos = todos.map(t => t.id === id ? {...t, done: !t.done} : t);
+        save();
+        render();
+      }, 280);
+    } else {
+      todos = todos.map(t => t.id === id ? {...t, done: !t.done} : t);
+      save();
+      render();
+    }
   }
 
-  function addTodo() {
-    const text = input.value.trim();
-    if (!text) return;
-    todos.unshift({ id: Date.now(), text, done: false });
-    input.value = '';
-    addBtn.disabled = true;
-    save();
-    filter = 'all';
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === 'all'));
-    render();
-  }
-
-  // Delegated events on list
   listEl.addEventListener('click', e => {
     const item = e.target.closest('[data-id]');
     if (!item) return;
@@ -396,11 +363,18 @@
     const action = e.target.dataset.action;
 
     if (action === 'toggle') {
-      todos = todos.map(t => t.id === id ? {...t, done: !t.done} : t);
-      save(); render();
+      toggleWithAnimation(id);
+    } else if (action === 'restore') {
+      toggleWithAnimation(id);
     } else if (action === 'delete') {
-      todos = todos.filter(t => t.id !== id);
-      save(); render();
+      const li = listEl.querySelector(`[data-id="${id}"]`);
+      if (li) {
+        li.classList.add('vanish');
+        setTimeout(() => {
+          todos = todos.filter(t => t.id !== id);
+          save(); render();
+        }, 280);
+      }
     } else if (action === 'edit' && editingId !== id) {
       editingId = id;
       render();
@@ -431,12 +405,22 @@
     save(); render();
   }, true);
 
-  // Input
+  function addTodo() {
+    const text = input.value.trim();
+    if (!text) return;
+    todos.unshift({ id: Date.now(), text, done: false });
+    input.value = '';
+    addBtn.disabled = true;
+    save();
+    filter = 'active';
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === 'active'));
+    render();
+  }
+
   input.addEventListener('input', () => { addBtn.disabled = !input.value.trim(); });
   input.addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(); });
   addBtn.addEventListener('click', addTodo);
 
-  // Tabs
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       filter = tab.dataset.filter;
@@ -447,7 +431,6 @@
     });
   });
 
-  // Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
   }
